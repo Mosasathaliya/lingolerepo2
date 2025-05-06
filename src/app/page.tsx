@@ -188,7 +188,7 @@ export default function Home() {
       </main>
 
       <footer className="mt-auto pt-8 text-center text-muted-foreground text-sm">
-        Powered by AI & Next.js | Designed by Expert Designer
+        Powered by Speed of Mastery
       </footer>
     </div>
   );
