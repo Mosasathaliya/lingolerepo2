@@ -10,6 +10,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { suggestNewWords, type SuggestNewWordsInput, type SuggestNewWordsOutput } from "@/ai/flows/suggest-new-words";
 import { useToast } from "@/hooks/use-toast";
 import { BookOpenText, Lightbulb } from "lucide-react";
+import { GeistSans } from "geist/font/sans";
 
 
 // Define initial categories
@@ -70,7 +71,9 @@ export default function Home() {
           english: item.english,
           arabic: item.arabic,
           definition: item.definition,
+          arabicDefinition: item.arabicDefinition, // Added mapping
           example: item.example,
+          arabicExample: item.arabicExample, // Added mapping
       }));
 
       setWordQueue(newWords);
@@ -99,7 +102,9 @@ export default function Home() {
 
   // Fetch words when category changes
   useEffect(() => {
-    fetchAndSetNewWords(selectedCategory);
+     startAiTransition(() => {
+        fetchAndSetNewWords(selectedCategory);
+      });
   }, [selectedCategory, fetchAndSetNewWords]);
 
   const getNextWord = useCallback(() => {
@@ -142,7 +147,7 @@ export default function Home() {
   };
 
   return (
-    <div className={`flex flex-col items-center min-h-screen p-4 sm:p-8 transition-colors duration-300 ${isDarkMode ? 'dark' : ''}`}>
+    <div className={`flex flex-col items-center min-h-screen p-4 sm:p-8 transition-colors duration-300 ${isDarkMode ? 'dark' : ''} ${GeistSans.className}`}>
        <div className="absolute top-4 right-4">
         <ThemeToggle isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
       </div>
@@ -173,7 +178,7 @@ export default function Home() {
 
         <Button
           onClick={getNextWord}
-          disabled={isLoading || isAiLoading || wordQueue.length === 0 && !currentWord} // Disable if loading or queue empty
+          disabled={isLoading || isAiLoading || (wordQueue.length === 0 && !currentWord)} // Disable if loading or queue empty and no current word
           size="lg"
           className="bg-accent hover:bg-accent/90 text-accent-foreground transition-all duration-300 ease-in-out transform hover:scale-105 shadow-md w-full"
         >

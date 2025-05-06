@@ -7,12 +7,16 @@ import { Button } from "@/components/ui/button";
 import { Volume2 } from "lucide-react";
 import { useSpeechSynthesis } from "@/hooks/useSpeechSynthesis";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Separator } from "@/components/ui/separator";
+
 
 export interface Word {
   english: string;
   arabic: string;
   definition: string;
+  arabicDefinition: string; // Added
   example: string;
+  arabicExample: string; // Added
 }
 
 interface WordCardProps {
@@ -35,7 +39,7 @@ export function WordCard({ word, isLoading = false }: WordCardProps) {
             <Skeleton className="h-4 w-1/4" />
             <Skeleton className="h-6 w-2/5" />
           </div>
-          <div className="space-y-2">
+           <div className="space-y-2">
             <Skeleton className="h-4 w-1/4" />
             <Skeleton className="h-4 w-full" />
             <Skeleton className="h-4 w-4/5" />
@@ -45,6 +49,16 @@ export function WordCard({ word, isLoading = false }: WordCardProps) {
             <Skeleton className="h-4 w-full" />
             <Skeleton className="h-4 w-4/5" />
           </div>
+          <div className="space-y-2">
+             <Skeleton className="h-4 w-1/4" />
+             <Skeleton className="h-4 w-full" />
+             <Skeleton className="h-4 w-4/5" />
+           </div>
+           <div className="space-y-2">
+             <Skeleton className="h-4 w-1/4" />
+             <Skeleton className="h-4 w-full" />
+             <Skeleton className="h-4 w-4/5" />
+           </div>
         </CardContent>
       </Card>
     );
@@ -69,7 +83,7 @@ export function WordCard({ word, isLoading = false }: WordCardProps) {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => speak(word.english)}
+            onClick={() => speak(word.english, 'en-US')}
             aria-label={`Listen to ${word.english}`}
             title="Listen to pronunciation"
             className="text-secondary hover:text-secondary/80"
@@ -86,28 +100,88 @@ export function WordCard({ word, isLoading = false }: WordCardProps) {
           </p>
         </div>
 
-        <div>
-          <h3 className="text-sm font-medium text-accent mb-1">📖 Definition:</h3>
-          <p className="text-base leading-relaxed">{word.definition}</p>
-        </div>
+        <Separator />
 
-        <div>
-          <h3 className="text-sm font-medium text-accent mb-1">💬 Example:</h3>
-          <div className="flex items-center justify-between gap-2">
-             <p className="text-base italic text-foreground/80">"{word.example}"</p>
-             {isSupported && (
+        {/* English Definition and Example */}
+        <div className="space-y-3">
+           <div>
+             <h3 className="text-sm font-medium text-accent mb-1 flex items-center gap-1">
+               📖 Definition (EN)
+               {isSupported && (
                 <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => speak(word.example)}
-                    aria-label="Listen to example sentence"
-                    title="Listen to example"
-                    className="text-secondary hover:text-secondary/80 flex-shrink-0"
+                    onClick={() => speak(word.definition, 'en-US')}
+                    aria-label="Listen to English definition"
+                    title="Listen to definition"
+                    className="text-secondary hover:text-secondary/80 h-5 w-5 p-0"
                 >
-                    <Volume2 className="h-5 w-5" />
+                    <Volume2 className="h-4 w-4" />
+                </Button>
+               )}
+             </h3>
+             <p className="text-base leading-relaxed">{word.definition}</p>
+           </div>
+           <div>
+             <h3 className="text-sm font-medium text-accent mb-1 flex items-center gap-1">
+               💬 Example (EN)
+               {isSupported && (
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => speak(word.example, 'en-US')}
+                    aria-label="Listen to English example sentence"
+                    title="Listen to example"
+                    className="text-secondary hover:text-secondary/80 h-5 w-5 p-0"
+                >
+                    <Volume2 className="h-4 w-4" />
                 </Button>
              )}
-          </div>
+             </h3>
+             <p className="text-base italic text-foreground/80">"{word.example}"</p>
+           </div>
+        </div>
+
+        <Separator />
+
+        {/* Arabic Definition and Example */}
+         <div className="space-y-3 text-right" dir="rtl">
+           <div>
+             <h3 className="text-sm font-medium text-accent mb-1 flex items-center justify-end gap-1">
+               {isSupported && (
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => speak(word.arabicDefinition, 'ar-SA')} // Assuming Saudi Arabic voice
+                    aria-label="Listen to Arabic definition"
+                    title="استمع للتعريف"
+                    className="text-secondary hover:text-secondary/80 h-5 w-5 p-0"
+                >
+                    <Volume2 className="h-4 w-4" />
+                </Button>
+               )}
+               📖 التعريف (AR)
+             </h3>
+             <p className="text-base leading-relaxed font-[inherit]">{word.arabicDefinition}</p>
+           </div>
+           <div>
+             <h3 className="text-sm font-medium text-accent mb-1 flex items-center justify-end gap-1">
+               {isSupported && (
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => speak(word.arabicExample, 'ar-SA')} // Assuming Saudi Arabic voice
+                    aria-label="Listen to Arabic example sentence"
+                    title="استمع للمثال"
+                    className="text-secondary hover:text-secondary/80 h-5 w-5 p-0"
+                >
+                    <Volume2 className="h-4 w-4" />
+                </Button>
+               )}
+                💬 مثال (AR)
+             </h3>
+             <p className="text-base italic text-foreground/80 font-[inherit]">"{word.arabicExample}"</p>
+           </div>
         </div>
       </CardContent>
     </Card>

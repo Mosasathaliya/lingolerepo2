@@ -23,8 +23,10 @@ const SuggestNewWordsOutputSchema = z.array(
   z.object({
     english: z.string().describe('The English word.'),
     arabic: z.string().describe('The Arabic translation of the word.'),
-    definition: z.string().describe('The definition of the word.'),
-    example: z.string().describe('An example sentence using the word.'),
+    definition: z.string().describe('The English definition of the word.'),
+    arabicDefinition: z.string().describe('The Arabic definition of the word.'),
+    example: z.string().describe('An example sentence using the word in English.'),
+    arabicExample: z.string().describe('An example sentence using the word in Arabic.'),
   })
 );
 export type SuggestNewWordsOutput = z.infer<typeof SuggestNewWordsOutputSchema>;
@@ -37,7 +39,13 @@ const prompt = ai.definePrompt({
   name: 'suggestNewWordsPrompt',
   input: {schema: SuggestNewWordsInputSchema},
   output: {schema: SuggestNewWordsOutputSchema},
-  prompt: `You are a vocabulary expert.  Suggest {{numberOfWords}} new English words related to the category '{{{category}}}'. Provide the Arabic translation, definition, and an example sentence for each word.
+  prompt: `You are a vocabulary expert. Suggest {{numberOfWords}} new English words related to the category '{{{category}}}'. Provide the following for each word:
+- The English word.
+- The Arabic translation.
+- The English definition.
+- The Arabic definition.
+- An example sentence using the word in English.
+- An example sentence using the word in Arabic.
 
 Output should be a JSON array of objects with the following format:
 
@@ -45,8 +53,10 @@ Output should be a JSON array of objects with the following format:
   {
     "english": "English word",
     "arabic": "Arabic translation",
-    "definition": "Definition of the word",
-    "example": "Example sentence using the word"
+    "definition": "English definition of the word",
+    "arabicDefinition": "Arabic definition of the word",
+    "example": "Example sentence using the word in English",
+    "arabicExample": "Example sentence using the word in Arabic"
   },
   ...
 ]
