@@ -13,14 +13,20 @@ import { BookOpenText, Lightbulb } from "lucide-react";
 import { GeistSans } from "geist/font/sans";
 
 
-// Define initial categories
-const INITIAL_CATEGORIES = ["Emotional", "Professional", "Intellectual", "Personal Growth", "Relationships"];
+// Define initial categories with Arabic translations
+const INITIAL_CATEGORIES = [
+  { english: "Emotional", arabic: "عاطفي" },
+  { english: "Professional", arabic: "احترافي" },
+  { english: "Intellectual", arabic: "فكري" },
+  { english: "Personal Growth", arabic: "نمو شخصي" },
+  { english: "Relationships", arabic: "علاقات" },
+];
 
 export default function Home() {
   const [currentWord, setCurrentWord] = useState<Word | null>(null);
   const [wordQueue, setWordQueue] = useState<Word[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>(INITIAL_CATEGORIES[0]); // Default category
-  const [categories, setCategories] = useState<string[]>(INITIAL_CATEGORIES); // Manage categories dynamically if needed later
+  const [selectedCategory, setSelectedCategory] = useState<string>(INITIAL_CATEGORIES[0].english); // Default category (English name)
+  const [categories, setCategories] = useState<{ english: string; arabic: string }[]>(INITIAL_CATEGORIES); // Manage categories with translations
   const [isLoading, setIsLoading] = useState(false);
   const [isAiLoading, startAiTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -78,9 +84,10 @@ export default function Home() {
 
       setWordQueue(newWords);
       setCurrentWord(newWords[0] || null); // Display the first word immediately
+      const categoryDisplay = categories.find(c => c.english === category)?.english || category; // Find display name
       toast({
         title: "New Words Loaded!",
-        description: `Successfully fetched ${newWords.length} words for the '${category}' category.`,
+        description: `Successfully fetched ${newWords.length} words for the '${categoryDisplay}' category.`,
         variant: 'default',
       });
 
@@ -98,7 +105,7 @@ export default function Home() {
     } finally {
       setIsLoading(false);
     }
-  }, [toast]);
+  }, [toast, categories]); // Added categories to dependency array
 
   // Fetch words when category changes
   useEffect(() => {
@@ -132,13 +139,14 @@ export default function Home() {
        });
     } else {
          setError("No more words in the queue and failed to fetch new ones.");
+         const categoryDisplay = categories.find(c => c.english === selectedCategory)?.english || selectedCategory; // Find display name
          toast({
              title: "Queue Empty",
-             description: "Reached the end of the words for this category. Try fetching again or changing category.",
+             description: `Reached the end of the words for '${categoryDisplay}'. Try fetching again or changing category.`,
              variant: "destructive",
          });
     }
-  }, [wordQueue, selectedCategory, isLoading, isAiLoading, fetchAndSetNewWords, toast]);
+  }, [wordQueue, selectedCategory, isLoading, isAiLoading, fetchAndSetNewWords, toast, categories]); // Added categories
 
 
   const handleCategoryChange = (newCategory: string) => {
@@ -164,7 +172,7 @@ export default function Home() {
         <CategorySelector
           selectedCategory={selectedCategory}
           onCategoryChange={handleCategoryChange}
-          categories={categories}
+          categories={categories} // Pass the array of objects
           disabled={isLoading || isAiLoading}
         />
 
