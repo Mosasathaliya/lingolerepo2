@@ -37,8 +37,12 @@ export function useSpeechSynthesis() {
 
     utterance.onstart = () => setIsSpeaking(true);
     utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = (event) => {
-      console.error('Speech synthesis error:', event);
+    utterance.onerror = (event: SpeechSynthesisErrorEvent) => {
+      if (event.error === 'voice-unavailable' || event.error === 'language-unavailable') {
+        console.warn(`Speech synthesis warning: ${event.error}. The voice for the selected language may not be installed on your system.`);
+      } else {
+        console.error(`Speech synthesis error: ${event.error}`);
+      }
       setIsSpeaking(false);
     };
 
